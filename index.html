@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Effort | HNSN Alerta</title>
+    <title>Dashboard Effort | HNSN Period</title>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,78 +13,66 @@
 
     <style>
         :root {
-            --bg: #f8fafc; --card: #ffffff; --text: #334155;
+            --bg-body: #f1f5f9; --bg-card: #ffffff;
+            --text-pri: #334155; --text-sec: #64748b;
             --brand: #0284c7; --danger: #ef4444; --success: #10b981; --warn: #f59e0b;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding-top: 45px; overflow-x: hidden; }
+        body { background: var(--bg-body); color: var(--text-pri); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-top: 45px; overflow-x: hidden; }
 
-        /* Ticker Detalhado */
-        .ticker-wrap { position: fixed; top: 0; width: 100%; height: 42px; background: #0f172a; color: #fff; z-index: 1000; display: flex; align-items: center; border-bottom: 3px solid var(--brand); }
-        .ticker-move { display: flex; gap: 80px; white-space: nowrap; animation: scroll 50s linear infinite; padding-left: 100%; }
+        /* Ticker */
+        .ticker-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 40px; background: #0f172a; color: #fff; z-index: 2000; display: flex; align-items: center; border-bottom: 3px solid var(--brand); }
+        .ticker-move { display: flex; gap: 60px; white-space: nowrap; animation: scroll 60s linear infinite; padding-left: 100%; align-items: center; }
         @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        .t-item { font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
-        .t-highlight { color: #fbbf24; font-weight: 800; }
+        .t-item { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
 
         /* Animações */
         @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .anim-alert { animation: pulse-red 1s infinite; color: var(--danger); }
-        
-        /* Animação de Fundo para Críticos */
-        @keyframes bg-flash-crit {
-            0% { background-color: rgba(255, 255, 255, 1); }
-            50% { background-color: rgba(254, 226, 226, 0.5); }
-            100% { background-color: rgba(255, 255, 255, 1); }
-        }
+        .anim-alert { animation: pulse-red 1.5s infinite; color: var(--danger); }
+        @keyframes border-flash { 0% { border-left-color: var(--danger); background: rgba(239,68,68,0.05); } 50% { border-left-color: transparent; background: transparent; } 100% { border-left-color: var(--danger); background: rgba(239,68,68,0.05); } }
 
         /* Layout */
         .main-container { max-width: 1600px; margin: 20px auto; padding: 0 20px; }
-        .header-bar { background: var(--card); padding: 15px 25px; border-radius: 10px; border-left: 5px solid var(--brand); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .brand-title { font-weight: 900; font-size: 1.5rem; color: #0f172a; }
+        .header-bar { background: var(--bg-card); padding: 15px 25px; border-radius: 10px; border-left: 5px solid var(--brand); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .brand-title { font-weight: 900; font-size: 1.8rem; color: #0f172a; letter-spacing: -0.5px; }
+        .brand-subtitle { color: var(--text-sec); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
 
-        /* KPI Cards */
+        /* KPIs */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .kpi-card { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .kpi-val { font-size: 2.2rem; font-weight: 800; margin-top: 5px; line-height: 1; }
-        .kpi-lbl { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
-        .icon-box { position: absolute; right: 15px; top: 15px; font-size: 1.5rem; opacity: 0.8; }
+        .kpi-card { background: var(--bg-card); padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .kpi-val { font-size: 2.5rem; font-weight: 800; margin-top: 5px; line-height: 1; }
+        .kpi-lbl { font-size: 0.75rem; text-transform: uppercase; color: var(--text-sec); font-weight: 700; }
+        .kpi-icon { position: absolute; right: 20px; top: 20px; font-size: 1.8rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
 
         /* Content */
         .content-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; }
-        .panel { background: var(--card); border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .panel { background: var(--bg-card); border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
         /* Toolbar */
-        .toolbar { padding: 10px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .custom-select { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #334155; cursor: pointer; }
+        .toolbar { padding: 10px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .custom-select, .date-input { padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #334155; }
+        .date-group { display: flex; align-items: center; gap: 5px; background: #e2e8f0; padding: 2px 8px; border-radius: 6px; }
+        .date-label { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: #64748b; }
         .search-box { flex: 1; min-width: 150px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
 
         /* Table */
         .table-container { height: 500px; overflow-y: auto; }
         .custom-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
         .custom-table th { position: sticky; top: 0; background: #e2e8f0; z-index: 10; padding: 10px 15px; text-align: left; font-weight: 700; color: #475569; border-bottom: 2px solid #cbd5e1; }
-        .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; border-left: 6px solid transparent; }
+        .custom-table td { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; border-left: 6px solid transparent; }
         .custom-table tr:hover { background: #f8fafc; cursor: pointer; }
         
-        /* --- SINALIZAÇÃO REFORÇADA --- */
-        
-        /* CRÍTICO (Vermelho Pulsante) */
-        .row-crit { animation: bg-flash-crit 2s infinite; }
-        .row-crit td:first-child { border-left-color: var(--danger) !important; }
-        .row-crit td { color: #b91c1c; font-weight: 600; } /* Texto Vermelho Escuro */
-        
-        /* ABERTO (Amarelo Forte) */
-        .row-open td:first-child { border-left-color: var(--warn) !important; }
-        .row-open td:nth-child(2) { color: #d97706; font-weight: 700; } /* OS em Laranja */
-
-        /* FECHADO (Verde Discreto) */
-        .row-closed td:first-child { border-left-color: var(--success) !important; opacity: 0.7; }
+        /* Signalization */
+        .row-crit td:first-child { border-left-color: var(--danger); }
+        .row-crit { animation: border-flash 2s infinite; }
+        .row-open td:first-child { border-left-color: var(--warn); }
+        .row-closed td:first-child { border-left-color: var(--success); }
 
         /* Upload */
         .upload-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; z-index: 3000; display: flex; justify-content: center; align-items: center; }
         .upload-box { background: #fff; padding: 50px; border-radius: 20px; text-align: center; border: 2px dashed #cbd5e1; cursor: pointer; }
         
-        /* Modal Print Button */
+        /* Modal Print */
         .btn-print { background-color: var(--brand); color: white; width: 100%; font-weight: bold; border: none; padding: 10px; border-radius: 6px; }
-        .btn-print:hover { background-color: #026aa7; }
     </style>
 </head>
 <body>
@@ -97,6 +85,7 @@
         <h3>Dashboard Effort</h3>
         <p class="text-muted">Importar Relatório (.xlsx / .csv)</p>
         <input type="file" id="fileInput" hidden accept=".csv, .xlsx, .xls" onchange="processFile(this.files)">
+        <div id="loader" class="mt-3 text-primary fw-bold" style="display:none">Processando...</div>
     </div>
 </div>
 
@@ -104,7 +93,7 @@
     <div class="header-bar">
         <div>
             <div class="brand-title">DASHBOARD <span style="color:var(--brand)">EFFORT</span></div>
-            <div class="small text-muted fw-bold">MANUTENÇÃO | HNSN</div>
+            <div class="brand-subtitle"><i class="fa-solid fa-screwdriver-wrench"></i> Manutenção HNSN</div>
         </div>
         <div>
             <button class="btn btn-primary fw-bold btn-sm" onclick="document.getElementById('fileInput').click()">Nova Importação</button>
@@ -113,22 +102,22 @@
 
     <div class="kpi-grid">
         <div class="kpi-card" style="border-left: 4px solid var(--danger);">
-            <div class="icon-box anim-alert"><i class="fa-solid fa-bell"></i></div>
+            <div class="kpi-icon anim-alert" style="background:rgba(239,68,68,0.1); border-radius:50%; color:var(--danger)"><i class="fa-solid fa-bell"></i></div>
             <div class="kpi-lbl">Críticos Abertos</div>
             <div class="kpi-val text-danger" id="kpiCrit">0</div>
         </div>
         <div class="kpi-card" style="border-left: 4px solid var(--brand);">
-            <div class="icon-box text-primary"><i class="fa-solid fa-clock"></i></div>
+            <div class="kpi-icon text-primary"><i class="fa-solid fa-clock"></i></div>
             <div class="kpi-lbl">Total Pendente</div>
             <div class="kpi-val text-primary" id="kpiOpen">0</div>
         </div>
         <div class="kpi-card" style="border-left: 4px solid var(--warn);">
-            <div class="icon-box text-warning"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="kpi-icon text-warning"><i class="fa-solid fa-hourglass-half"></i></div>
             <div class="kpi-lbl">Tempo Médio (TMA)</div>
             <div class="kpi-val text-warning" id="kpiTma">0h</div>
         </div>
         <div class="kpi-card" style="border-left: 4px solid var(--success);">
-            <div class="icon-box text-success"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="kpi-icon text-success"><i class="fa-solid fa-check-circle"></i></div>
             <div class="kpi-lbl">Concluídos</div>
             <div class="kpi-val text-success" id="kpiClosed">0</div>
         </div>
@@ -138,16 +127,22 @@
         <div class="panel">
             <div class="toolbar">
                 <div style="flex:1" class="d-flex align-items-center gap-2">
-                    <h6 class="m-0 fw-bold text-muted"><i class="fa-solid fa-list me-2"></i>Ordens de Serviço</h6>
-                    <button id="btnClearFilter" class="btn btn-sm btn-warning fw-bold" style="display:none;" onclick="clearFilter()">
-                        <i class="fa-solid fa-filter-circle-xmark"></i> Limpar Filtro
-                    </button>
+                    <h6 class="m-0 fw-bold text-muted"><i class="fa-solid fa-filter me-2"></i>Filtros</h6>
+                    <button id="btnClearFilter" class="btn btn-sm btn-warning fw-bold" style="display:none; font-size:0.7rem;" onclick="clearFilter()">Limpar Gráfico</button>
                 </div>
-                
-                <input type="text" id="fSearch" class="search-box" placeholder="Buscar..." onkeyup="renderTable()">
+
+                <div class="date-group">
+                    <span class="date-label">Início:</span>
+                    <input type="date" id="fDateStart" class="date-input" onchange="updateDash()">
+                </div>
+                <div class="date-group">
+                    <span class="date-label">Fim:</span>
+                    <input type="date" id="fDateEnd" class="date-input" onchange="updateDash()">
+                </div>
+
                 <select id="fStatus" class="custom-select" onchange="renderTable()"><option value="Aberto">Status: Abertos</option><option value="Fechado">Status: Fechados</option><option value="TODOS">Status: Todos</option></select>
-                <select id="fOficina" class="custom-select" onchange="renderTable()"><option value="TODAS">Oficinas: Todas</option></select>
-                <select id="fOrder" class="custom-select" onchange="renderTable()"><option value="NEW">Recentes</option><option value="OLD">Antigos</option><option value="CRIT">Prioridade</option></select>
+                <select id="fOficina" class="custom-select" onchange="renderTable()"><option value="TODAS">Todas Oficinas</option></select>
+                <input type="text" id="fSearch" class="search-box" placeholder="🔎 Buscar..." onkeyup="renderTable()">
             </div>
             
             <div class="table-container">
@@ -190,9 +185,7 @@
                 </div>
             </div>
             <div class="modal-footer bg-light p-2">
-                <button type="button" class="btn-print" onclick="imprimirOS()">
-                    <i class="fa-solid fa-print me-2"></i> IMPRIMIR O.S. (LAYOUT PDF)
-                </button>
+                <button type="button" class="btn-print" onclick="imprimirOS()"><i class="fa-solid fa-print me-2"></i> IMPRIMIR O.S.</button>
             </div>
         </div>
     </div>
@@ -204,8 +197,8 @@
     function processFile(files) {
         if(!files.length) return;
         const n=files[0].name, m=n.match(/(\d{8})_(\d{6})/);
-        fileDateLabel = m ? `${m[1].substr(0,2)}/${m[1].substr(2,2)} às ${m[2].substr(0,2)}:${m[2].substr(2,2)}` : new Date().toLocaleString();
-        
+        fileDateLabel = m ? `${m[1].substr(0,2)}/${m[1].substr(2,2)}/${m[1].substr(4,4)}` : new Date().toLocaleDateString();
+        document.getElementById('loader').style.display='block';
         const r=new FileReader();
         r.onload=e=>{
             const w=XLSX.read(e.target.result,{type:'array',cellDates:true});
@@ -262,10 +255,33 @@
         updateDash();
     }
 
+    // --- FILTRAGEM CENTRAL (Incluindo Datas) ---
+    function getFilteredData() {
+        let d = rawData;
+        
+        // 1. Filtro de Data
+        const dStart = document.getElementById('fDateStart').value;
+        const dEnd = document.getElementById('fDateEnd').value;
+        if(dStart) {
+            const dtS = new Date(dStart); dtS.setHours(0,0,0,0);
+            d = d.filter(x => x.dOpen && x.dOpen >= dtS);
+        }
+        if(dEnd) {
+            const dtE = new Date(dEnd); dtE.setHours(23,59,59,999);
+            d = d.filter(x => x.dOpen && x.dOpen <= dtE);
+        }
+
+        // 2. Filtro de Gráfico
+        if(chartFilter) {
+            if(chartFilter.t==='ofi') d = d.filter(x => x.ofi === chartFilter.v);
+            if(chartFilter.t==='tec') d = d.filter(x => x.tec && x.tec.includes(chartFilter.v));
+        }
+        return d;
+    }
+
     function updateDash() {
-        const ab = rawData.filter(x=>x.st==="Aberto");
-        const fe = rawData.filter(x=>x.st==="Fechado");
-        const cr = ab.filter(x=>x.crit);
+        const d = getFilteredData();
+        const ab = d.filter(x=>x.st==="Aberto"), fe = d.filter(x=>x.st==="Fechado"), cr = ab.filter(x=>x.crit);
         
         document.getElementById('kpiOpen').innerText = ab.length;
         document.getElementById('kpiClosed').innerText = fe.length;
@@ -275,23 +291,9 @@
         const h=c>0?Math.floor((tot/c)/3600000):0;
         document.getElementById('kpiTma').innerText=h>24?`${Math.floor(h/24)}d`:h+"h";
 
-        // TICKER DETALHADO
-        let tk = `<span class="t-item"><i class="fa-solid fa-clock"></i> ATUALIZAÇÃO: <span class="t-highlight ms-2">${fileDateLabel}</span></span>`;
-        
-        if(cr.length > 0) {
-            // Conta setores criticos
-            const countSet = {};
-            cr.forEach(x => countSet[x.set] = (countSet[x.set]||0)+1);
-            const topSet = Object.entries(countSet).sort((a,b)=>b[1]-a[1])[0];
-            const setMsg = topSet ? `(FOCO: ${topSet[0]})` : "";
-            
-            tk += `<span class="t-item text-danger ms-5" style="font-size:1rem"><i class="fa-solid fa-bell fa-shake me-2"></i> ALERTA: ${cr.length} CRÍTICOS ${setMsg}</span>`;
-        } else {
-            tk += `<span class="t-item text-success ms-5"><i class="fa-solid fa-check-circle me-2"></i> SEM CRITICIDADES</span>`;
-        }
-
-        tk += `<span class="t-item ms-5 text-warning"><i class="fa-solid fa-list-ol me-2"></i> FILA DE TRABALHO: ${ab.length} CHAMADOS</span>`;
-
+        let tk = `<span class="t-item ms-5"><i class="fa-solid fa-database"></i> DATA BASE: ${fileDateLabel}</span>`;
+        if(cr.length) tk += `<span class="t-item text-danger ms-5">🔔 ALERTA: ${cr.length} CRÍTICOS</span>`;
+        tk += `<span class="t-item text-success ms-5">🏆 RESOLVIDOS PERÍODO: ${fe.length}</span>`;
         document.getElementById('tickerContent').innerHTML = tk+tk;
 
         renderTable();
@@ -299,38 +301,30 @@
     }
 
     function renderTable() {
+        let d = getFilteredData(); // Pega dados já filtrados por data e gráfico
         const st = document.getElementById('fStatus').value;
         const ofi = document.getElementById('fOficina').value;
         const txt = document.getElementById('fSearch').value.toLowerCase();
-        const ord = document.getElementById('fOrder').value;
 
-        let d = rawData.filter(x => {
+        // Filtros da Toolbar da Tabela
+        d = d.filter(x => {
             if(st!=="TODOS" && x.st!==st) return false;
             if(ofi!=="TODAS" && x.ofi!==ofi) return false;
             if(txt && !JSON.stringify(x).toLowerCase().includes(txt)) return false;
             return true;
         });
 
+        // Ordenação fixa para facilitar (Criticos > Recentes)
         d.sort((a,b) => {
-            if(ord==="NEW") return b.dOpen - a.dOpen;
-            if(ord==="OLD") return a.dOpen - b.dOpen;
-            if(ord==="CRIT") return b.crit - a.crit;
-            return 0;
+            if (b.crit !== a.crit) return b.crit - a.crit;
+            return (b.dOpen||0) - (a.dOpen||0);
         });
 
         const tb = document.getElementById('tableBody'); tb.innerHTML = "";
         d.slice(0,100).forEach(x => {
-            let cls = "row-open";
-            let icon = `<i class="fa-solid fa-clock text-warning"></i>`;
-            
-            if(x.st==="Fechado") {
-                cls = "row-closed";
-                icon = `<i class="fa-solid fa-check text-success"></i>`;
-            }
-            if(x.crit && x.st==="Aberto") {
-                cls = "row-crit";
-                icon = `<i class="fa-solid fa-bell fa-shake text-danger"></i>`;
-            }
+            let cls = "row-open"; let icon = `<i class="fa-solid fa-clock text-warning"></i>`;
+            if(x.st==="Fechado") { cls = "row-closed"; icon = `<i class="fa-solid fa-check text-success"></i>`; }
+            if(x.crit && x.st==="Aberto") { cls = "row-crit"; icon = `<i class="fa-solid fa-bell fa-shake text-danger"></i>`; }
 
             tb.innerHTML += `<tr onclick="openDet('${x.os}')" class="${cls}"><td>${icon}</td><td class="fw-bold">#${x.os}</td><td>${x.ofi}</td><td>${x.set}</td><td class="text-truncate" style="max-width:200px">${x.desc}</td><td>${x.dStr}</td></tr>`;
         });
@@ -351,6 +345,7 @@
     }
 
     function renderCharts(ab, fe) {
+        // Recalcular com dados filtrados
         const c1={}; ab.forEach(x=>c1[x.ofi]=(c1[x.ofi]||0)+1);
         const s1=Object.entries(c1).sort((a,b)=>b[1]-a[1]);
         
@@ -360,8 +355,8 @@
                 const val = cfg.w.config.xaxis.categories[cfg.dataPointIndex];
                 document.getElementById('fOficina').value = val;
                 document.getElementById('fStatus').value = 'Aberto';
-                showFilterBtn(); renderTable();
-            }}}, colors:['#0284c7'], xaxis:{categories:s1.map(x=>x[0]),labels:{style:{fontSize:'9px'}}}, plotOptions:{bar:{horizontal:true}}
+                renderTable(); // Filtro da toolbar
+            }}}, colors:['#0284c7'], xaxis:{categories:s1.map(x=>x[0]),labels:{style:{fontSize:'9px'}}}, plotOptions:{bar:{horizontal:true, borderRadius:4}}
         }).render();
 
         const c2={}; fe.forEach(x=>{if(x.tec){let n=x.tec.split(' ')[0]; c2[n]=(c2[n]||0)+1}});
@@ -371,23 +366,24 @@
             series:[{data:s2.map(x=>x[1])}],
             chart:{type:'bar',height:200,toolbar:{show:false},events:{dataPointSelection:(e,c,cfg)=>{ 
                 const val = cfg.w.config.xaxis.categories[cfg.dataPointIndex];
-                document.getElementById('fSearch').value = val;
-                document.getElementById('fStatus').value = 'Fechado';
-                showFilterBtn(); renderTable();
-            }}}, colors:['#16a34a'], xaxis:{categories:s2.map(x=>x[0]),labels:{style:{fontSize:'9px'}}}, plotOptions:{bar:{horizontal:false}}
+                applyFil('tec', val);
+            }}}, colors:['#16a34a'], xaxis:{categories:s2.map(x=>x[0]),labels:{style:{fontSize:'9px'}}}, plotOptions:{bar:{horizontal:false, borderRadius:4}}
         }).render();
     }
 
-    function showFilterBtn() { document.getElementById('btnClearFilter').style.display = 'block'; }
+    function applyFil(t,v) {
+        chartFilter={t,v};
+        document.getElementById('btnClearFilter').style.display='block';
+        document.getElementById('fStatus').value = (t==='tec') ? 'Fechado' : 'Aberto';
+        updateDash();
+    }
     function clearFilter() {
-        document.getElementById('fOficina').value = "TODAS";
-        document.getElementById('fStatus').value = "Aberto";
-        document.getElementById('fSearch').value = "";
-        document.getElementById('btnClearFilter').style.display = 'none';
-        renderTable();
+        chartFilter=null;
+        document.getElementById('btnClearFilter').style.display='none';
+        document.getElementById('fStatus').value = 'Aberto';
+        updateDash();
     }
 
-    // --- IMPRESSÃO LAYOUT PDF FIDELIDADE ---
     function imprimirOS() {
         if(!currentOS) return;
         const d = currentOS;
@@ -401,7 +397,7 @@
                 <style>
                     @media print { @page { size: A4; margin: 5mm; } body { -webkit-print-color-adjust: exact; } }
                     body { font-family: Arial, sans-serif; font-size: 10px; margin: 0; padding: 10px; color: #000; }
-                    .header { display: flex; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
+                    .header { display: flex; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; align-items: center; }
                     .logo { font-size: 20px; font-weight: bold; width: 15%; color: #444; }
                     .title { width: 70%; text-align: center; font-size: 16px; font-weight: bold; padding-top: 5px; }
                     .meta { width: 15%; text-align: right; font-size: 9px; line-height: 1.3; }
